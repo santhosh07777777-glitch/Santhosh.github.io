@@ -36,6 +36,7 @@
       width: 90%;
       padding: 6px;
       text-align: center;
+      text-transform: uppercase;
     }
     button {
       width: 100%;
@@ -67,11 +68,11 @@
   <table id="courseTable">
     <tr>
       <th>Credits</th>
-      <th>Grade Point</th>
+      <th>Grade (S/A/B/C/D)</th>
     </tr>
     <tr>
       <td><input type="number" placeholder="Credits"></td>
-      <td><input type="number" step="0.1" placeholder="Grade"></td>
+      <td><input type="text" placeholder="Grade"></td>
     </tr>
   </table>
 
@@ -86,12 +87,26 @@
 </div>
 
 <script>
+function gradeToPoint(grade) {
+  grade = grade.toUpperCase();
+  switch (grade) {
+    case 'S': return 10;
+    case 'A': return 9;
+    case 'B': return 8;
+    case 'C': return 7;
+    case 'D': return 6;
+    case 'E': return 5;
+    case 'F': return 0;
+    default: return null;
+  }
+}
+
 function addRow() {
   let table = document.getElementById("courseTable");
   let row = table.insertRow();
   row.innerHTML = `
     <td><input type="number" placeholder="Credits"></td>
-    <td><input type="number" step="0.1" placeholder="Grade"></td>
+    <td><input type="text" placeholder="Grade"></td>
   `;
 }
 
@@ -102,10 +117,11 @@ function calculateGPA() {
 
   for (let i = 1; i < table.rows.length; i++) {
     let credits = parseFloat(table.rows[i].cells[0].children[0].value);
-    let grade = parseFloat(table.rows[i].cells[1].children[0].value);
+    let gradeInput = table.rows[i].cells[1].children[0].value;
+    let gradePoint = gradeToPoint(gradeInput);
 
-    if (!isNaN(credits) && !isNaN(grade)) {
-      totalPoints += credits * grade;
+    if (!isNaN(credits) && gradePoint !== null) {
+      totalPoints += credits * gradePoint;
       totalCredits += credits;
     }
   }
@@ -116,7 +132,7 @@ function calculateGPA() {
       "Your GPA is: " + gpa;
   } else {
     document.getElementById("result").innerText =
-      "Please enter valid credits and grades";
+      "Please enter valid credits and grades (S/A/B/C/D)";
   }
 }
 </script>
